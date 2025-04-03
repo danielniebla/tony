@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruta Latte</title>
+    <style>
+        /* Reseteo de márgenes y paddings */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Ajuste para toda la página */
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        body {
+            background-image: url('imagenes/fondo\ granos\ de\ cafe2.jpg'); /* Ruta de la imagen de fondo */
+            background-size: cover; /* Asegura que la imagen cubra todo el fondo */
+            background-position: center; /* Centra la imagen */
+            background-repeat: no-repeat; /* Evita que la imagen se repita */
+            background-attachment: fixed; /* Hace que la imagen sea fija */
+            
+             }
+
+        /* Estilos del header */
+     
+        /* Eliminar márgenes y paddings de los contenedores y las imágenes */
+        div {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Imágenes responsivas */
+        img {
+            display: block; /* Elimina el espacio en línea alrededor de las imágenes */
+            margin: 0; /* Elimina márgenes de las imágenes */
+            padding: 0; /* Elimina paddings de las imágenes */
+            width: 100%; /* Asegura que las imágenes ocupen todo el ancho del contenedor */
+            max-width: 100vw;
+            margin: 10px auto;
+            display: block;
+            padding: 10px;
+            border-radius: 5px; /* Bordes redondeados */
+        }
+
+        .label {
+            font-size: 20px;
+            color: #23475a;
+            margin: 10px 0;
+        }
+
+        /* Botones */
+        button {
+            border: 1px;
+            border-radius: 4px;
+            padding: 5px 20px;
+            font-size: 17px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+            margin: 20px 0;
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+        }
+
+        .medium-button {
+            border-radius: 3px;
+            background-color: #23475a;
+            padding: 3px 4px;
+            font-size: 15px;
+            color: white;
+        }
+
+        .small-button {
+            border-radius: 2px;
+            padding: 2px 3px;
+            font-size: 14px;
+            color: rgb(255, 122, 122);
+        }
+
+        /* Formularios de cliente */
+        .client-form {
+            position: relative;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px auto;
+            background-color: rgba(255, 255, 255, 0.7);
+            width: 90%;
+            text-align: center;
+        }
+
+        .client-form::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('imagenes/Fondo\ cafes\ ruta\ late.JPG');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.8;
+            z-index: -1;
+        }
+
+        .product-container {
+            margin-bottom: 5%;
+            text-align: left;
+        }
+
+        .product-container label {
+            display: inline-block; /* Asegura que las etiquetas se comporten como bloques en línea */
+            width: 150px; /* Define un ancho fijo para todas las etiquetas */
+            text-align: left; /* Alinea el texto a la izquierda */
+            margin-right: 5%; /* Espaciado entre la etiqueta y el elemento siguiente */
+        }
+
+        .product-container select {
+            width: 200px; /* Define un ancho fijo para todos los menús desplegables */
+            max-width: 100%; /* Asegura que no excedan el ancho del contenedor */
+            text-align: left; /* Alinea el texto a la izquierda */
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 65%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 0px 10px gray;
+            z-index: 1000;
+        }
+
+        .modal button {
+            margin-top: 10px;
+        }
+
+        /* Grupo de botones */
+        .button-group {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Etiquetas y select en línea */
+        .product-container label,
+        .product-container select {
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background-image: url('imagenes/pie\ de\ pagina\ ruta.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 16px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <img src="imagenes/ruta late encabezado.jpg" class="img" alt="encabezado">
+        <img src="imagenes/para oferta.JPG" alt="Promociones">
+    </div>
+    <div>
+        <img src="imagenes/menu ruta latte.jpg" alt="Menú" class="full-width">
+    </div>
+
+    <button onclick="agregarCliente()">Agregar Cafe</button>
+    <button onclick="confirmarPedido()">Confirmar Pedido</button>
+
+    <div id="clientesLista"></div>
+
+    <div id="resumenModal" class="modal">
+        <div id="resumenContenido"></div>
+        <button class="medium-button" onclick="enviarPedido()">Pedir vía WhatsApp</button>
+        <button class="medium-button" onclick="cerrarModal()">Cancelar</button>
+    </div>
+
+    <script>
+        function agregarProducto(clienteIndex) {
+            const productosDiv = document.getElementById(`productos${clienteIndex}`);
+            const productContainer = document.createElement("div");
+            productContainer.classList.add("product-container");
+            productContainer.innerHTML = `
+                <label>Tipo de cafe:</label>
+                <select class="producto flotante">
+                    <option value="Expresso">Expresso</option>
+                    <option value="Americano">Americano</option>
+                    <option value="Flat White">Flat White</option>
+                    <option value="Cappuccino">Cappuccino</option>
+                    <option value="Latte">Latte</option>
+                    <option value="Caramel Macchiato">Caramel Macchiato</option>
+                </select>
+            `;
+            productosDiv.appendChild(productContainer);
+        }
+
+        function agregarTamano(clienteIndex) {
+            const tamanoDiv = document.getElementById(`tamano${clienteIndex}`);
+            const tamanoContainer = document.createElement("div");
+            tamanoContainer.classList.add("product-container");
+            tamanoContainer.innerHTML = `
+                <label>Tamaño del cafe:</label>
+                <select class="producto flotante">
+                    <option value="CH">Chico</option>
+                    <option value="GDE">Grande</option>
+                    </select>
+            `;
+            tamanoDiv.appendChild(tamanoContainer);
+        }
+
+        function agregarLeche(clienteIndex) {
+            const LecheDiv = document.getElementById(`leche${clienteIndex}`);
+            const LecheContainer = document.createElement("div");
+            LecheContainer.classList.add("product-container");
+            LecheContainer.innerHTML = `
+                <label>Tipo de leche:</label>
+                <select class="leche">
+                    <option value="Entera">Entera</option>
+                    <option value="Light">Light</option>
+                    <option value="Deslactosada">Deslactosada</option>
+                </select>
+                <button class="small-button" onclick="eliminarBebida(this)">Eliminar</button>
+            `;
+            LecheDiv.appendChild(LecheContainer);
+        }
+
+        function agregarAzucar(clienteIndex) {
+            const AzucarDiv = document.getElementById(`azucar${clienteIndex}`);
+            const AzucarContainer = document.createElement("div");
+            AzucarContainer.classList.add("product-container");
+            AzucarContainer.innerHTML = `
+                <label>Tipo de azucar:</label>
+                <select class="azucar">
+                    <option value="Normal">Normal</option>
+                    <option value="Morena">Morena</option>
+                    <option value="Stevia">Stevia</option>
+                </select>
+                <input type="number" class="cantidad" value="1" min="1" max="10">
+                <button class="small-button" onclick="eliminarBebida(this)">Eliminar</button>
+            `;
+            AzucarDiv.appendChild(AzucarContainer);
+        }
+
+        function agregarSabor(clienteIndex) {
+            const SaborDiv = document.getElementById(`sabor${clienteIndex}`);
+            const SaborContainer = document.createElement("div");
+            SaborContainer.classList.add("product-container");
+            SaborContainer.innerHTML = `
+                <label>Tipo de sabor:</label>
+                <select class="sabor">
+                    <option value="Clasico">Clasico</option>
+                    <option value="Vainilla">Vainilla</option>
+                    <option value="Caramelo">Caramelo</option>
+                    <option value="Moka">Moka</option>
+                </select>
+            `;
+            SaborDiv.appendChild(SaborContainer);
+        }
+
+        function agregarCliente() {
+            const clientesLista = document.getElementById("clientesLista");
+            const clienteForm = document.createElement("div");
+            clienteForm.classList.add("client-form");
+
+            const clienteIndex = clientesLista.children.length + 1;
+            clienteForm.innerHTML = `
+                <h3>Cafe ${clienteIndex}</h3>
+                <div class="productos" id="productos${clienteIndex}"></div>
+                <div class="Sabor" id="sabor${clienteIndex}"></div>
+                <div class="Leche" id="leche${clienteIndex}"></div>
+                <div class="Azucar" id="azucar${clienteIndex}"></div>
+                <div class="tamano" id="tamano${clienteIndex}"></div>
+                <div class="button-group">
+                    <button class="medium-button" onclick="agregarLeche(${clienteIndex})">Escoger Leche</button>
+                    <button class="medium-button" onclick="agregarAzucar(${clienteIndex})">Agregar Azúcar</button>
+                </div>
+                <button class="small-button" onclick="eliminarCliente(this)">Eliminar Cafe</button>
+            `;
+
+            // Agregar el formulario al contenedor de clientes
+            clientesLista.appendChild(clienteForm);
+
+            // Inicializar con un producto, un tamaño y un sabor por defecto
+            agregarProducto(clienteIndex);
+            agregarTamano(clienteIndex);
+            agregarSabor(clienteIndex);
+        }
+
+        function eliminarBebida(button) {
+            const container = button.closest(".product-container");
+            if (container) {
+                container.remove();
+            }
+        }
+
+        function eliminarCliente(button) {
+            button.parentElement.remove();
+        }
+
+        function confirmarPedido() {
+            let mensaje = "Pedido:\n";
+            document.querySelectorAll(".client-form").forEach((cliente, index) => {
+                mensaje += `Cafe ${index + 1}:\n`;
+
+                // Productos
+                cliente.querySelectorAll(`#productos${index + 1} .product-container`).forEach(producto => {
+                    const tipoProducto = producto.querySelector(".producto");
+                    if (tipoProducto) {
+                        mensaje += `Estilo- ${tipoProducto.value}\n`;
+                    }
+                });
+
+                // Tamaño
+                cliente.querySelectorAll(`#tamano${index + 1} .product-container`).forEach(tamano => {
+                    const tipoTamano = tamano.querySelector(".producto");
+                    if (tipoTamano) {
+                        mensaje += `Tamaño- ${tipoTamano.value}\n`;
+                    }
+                });
+
+                // Sabor
+                cliente.querySelectorAll(`#sabor${index + 1} .product-container`).forEach(sabor => {
+                    const tipoSabor = sabor.querySelector(".sabor");
+                    if (tipoSabor) {
+                        mensaje += `Sabor- ${tipoSabor.value}\n`;
+                    }
+                });
+
+                // Leche
+                cliente.querySelectorAll(`#leche${index + 1} .product-container`).forEach(leche => {
+                    const tipoLeche = leche.querySelector(".leche");
+                    if (tipoLeche) {
+                        mensaje += `Leche- ${tipoLeche.value}\n`;
+                    }
+                });
+
+                // Azúcar
+                cliente.querySelectorAll(`#azucar${index + 1} .product-container`).forEach(azucar => {
+                    const cantidadAzucar = azucar.querySelector(".cantidad");
+                    const tipoAzucar = azucar.querySelector(".azucar");
+                    if (cantidadAzucar && tipoAzucar) {
+                        mensaje += `Azucar- ${cantidadAzucar.value} x ${tipoAzucar.value}\n`;
+                    }
+                });
+            });
+
+            const resumenContenido = document.getElementById("resumenContenido");
+            const resumenModal = document.getElementById("resumenModal");
+            if (resumenContenido && resumenModal) {
+                resumenContenido.innerText = mensaje;
+                resumenModal.style.display = "block";
+            }
+        }
+
+        function enviarPedido() {
+            window.open(`https://api.whatsapp.com/send?phone=526672527776&text=${encodeURIComponent(document.getElementById("resumenContenido").innerText)}`, "_blank");
+        }
+
+        function cerrarModal() {
+            document.getElementById("resumenModal").style.display = "none";
+        }
+    </script>
+</body>
+<footer>
+    <p>© 2025 Ruta Latte - Todos los derechos reservados</p>
+</footer>
